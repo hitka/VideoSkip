@@ -1,0 +1,18 @@
+.options {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin: 10px 30px 10px 0;
+  align-self: flex-end;
+
+  &-menu {
+    position: absolute;
+    right: 35px;
+    bottom: 90px;
+    padding: 20px;
+  }
+
+  &-button {
+    margin-right: 10px !important;
+  }
+}

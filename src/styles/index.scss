@@ -1,0 +1,79 @@
+@import "./colors";
+@import "./common";
+
+@font-face {
+  font-family: 'Helvetica Neue';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Helvetica Neue'), url(../assets/fonts/HelveticaNeueCyr-Roman.woff) format('woff');
+}
+
+@font-face {
+  font-family: 'Helvetica Neue';
+  font-style: normal;
+  font-weight: 300;
+  src: local('Helvetica Neue'), url(../assets/fonts/HelveticaNeueCyr-Thin.woff) format('woff');
+}
+
+@font-face {
+  font-family: 'Helvetica Neue';
+  font-style: normal;
+  font-weight: 200;
+  src: local('Helvetica Neue'), url(../assets/fonts/HelveticaNeueCyr-Light.woff) format('woff');
+}
+
+@font-face {
+  font-family: 'Helvetica Neue';
+  font-style: normal;
+  font-weight: 500;
+  src: local('Helvetica Neue'), url(../assets/fonts/HelveticaNeue-Medium.otf) format('woff');
+}
+
+@font-face {
+  font-family: 'Helvetica Neue';
+  font-style: normal;
+  font-weight: 600;
+  src: local('Helvetica Neue'), url(../assets/fonts/HelveticaNeueCyr-Bold.woff) format('woff');
+}
+
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
+  background-color: transparent;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance:textfield;
+}
+
+::-webkit-scrollbar {
+  width: 19px;
+}
+
+::-webkit-scrollbar-track {
+  background: $grey-8;
+  border-radius: 20px;
+  border: 6px solid transparent;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb {
+  background: $grey-11;
+  border-radius: 20px;
+  border: 6px solid transparent;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: $grey-12;
+  border: 6px solid transparent;
+  background-clip: padding-box;
+}
