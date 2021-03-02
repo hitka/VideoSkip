@@ -1,14 +1,14 @@
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import axios from 'axios';
+import { useParams } from 'react-router';
 import VideoPlayer from '../VideoPlayer/VideoPlayer';
 import SkipState from '../SkipState/SkipState';
 import RequestsList from '../RequestsList/RequestsList';
 import './VideoPage.scss';
 import { parseYoutubeUrl } from '../../utils/url.utils';
-import { useParams } from 'react-router';
 import { TwitchPubSubService, updateConnection } from '../../services/PubSubService';
 import { RedemptionMessage } from '../../models/purchase';
 import { VideoData, VideoRequest } from '../../models/video';
-import axios from 'axios';
 
 const YOUTUBE_API_KEY = 'AIzaSyCVPinFlGHMn0uzeWFjNTA38QOZBejOlSs';
 
@@ -19,10 +19,16 @@ const VideoPage: FC = () => {
 
   const getVideoInfo = useCallback(async (id = 'vRVEZq8plc0'): Promise<VideoData> => {
     const { data } = await axios.get('https://www.googleapis.com/youtube/v3/videos', {
-      params: { id, key: YOUTUBE_API_KEY, part: 'snippet' },
+      params: { id, key: YOUTUBE_API_KEY, part: 'snippet,statistics' },
     });
+    const { viewCount, likeCount, dislikeCount } = data.items[0].statistics;
 
-    return { title: data.items[0].snippet.title };
+    return {
+      title: data.items[0].snippet.title,
+      dislikeCount: Number(dislikeCount),
+      likeCount: Number(likeCount),
+      viewCount: Number(viewCount),
+    };
   }, []);
 
   const handleNewRequest = useCallback(
@@ -34,13 +40,14 @@ const VideoPage: FC = () => {
       } = redemption;
       const videoId = parseYoutubeUrl(user_input);
 
-      console.log(videoId);
-      console.log(id);
-
       if (videoId && id === '5d95f900-576b-4ef7-bd12-0b12e5b497e4') {
-        const videoData = await getVideoInfo(videoId);
+        try {
+          const videoData = await getVideoInfo(videoId);
 
-        setRequestQueue((requests) => [...requests, { videoId, username: display_name, ...videoData }]);
+          setRequestQueue((requests) => [...requests, { videoId, username: display_name, ...videoData }]);
+        } catch (e) {
+          console.log(e);
+        }
       }
     },
     [getVideoInfo],

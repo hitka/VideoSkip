@@ -9,7 +9,7 @@ interface SkipStateProps {
 }
 
 const SkipState: FC<SkipStateProps> = ({ toNextVideo }) => {
-  const [skips, setSkips] = useState<number>(3);
+  const [skips, setSkips] = useState<number>(0);
   const [maxSkips, setMaxSkips] = useState<number>(7);
   const [isMaxSkips, setIsMaxSkips] = useState<boolean>(false);
   const skipService = useRef<SkipBotService>(new SkipBotService(setSkips));

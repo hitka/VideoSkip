@@ -1,0 +1,17 @@
+.video-stats {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+
+  &>* {
+    margin-right: 5px;
+  }
+
+  &>div {
+    font-size: 18px;
+  }
+
+  .likes-icon {
+    margin-left: 20px;
+  }
+}
