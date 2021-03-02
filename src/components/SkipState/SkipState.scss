@@ -5,7 +5,7 @@
   align-items: center;
   justify-content: center;
   height: 100px;
-  background-color: $blue-gray-3;
+  background-color: $background-second;
 
   .skip-button {
     border-radius: 50%;
@@ -15,22 +15,39 @@
   }
 
   .skip-slice-container {
+    position: relative;
     display: flex;
-    height: 75px;
+    width: 300px;
+    height: 50px;
     margin-right: 20px;
+    border: 3px solid $grey-1;
 
     .skip-slice {
-      width: 40px;
-      border: 5px solid $grey-10;
-      border-right: 0;
-      box-shadow: 0 0 15px 10px rgba($blue-gray-1, .2) inset;
-
-      &:last-child {
-        border-right: 5px solid $grey-10;
-      }
+      flex-grow: 1;
 
       &.active {
-        background-color: $orange;
+        background-color: $green-3;
+      }
+    }
+
+    .skips-count {
+      position: absolute;
+      display: flex;
+      font-size: 29px;
+      font-weight: 400;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%,-50%);
+
+      .max-skips-input {
+        width: 33px;
+        margin-left: 10px;
+        font-size: 26px;
+
+        .MuiInputBase-input {
+          padding-top: 0;
+          padding-bottom: 3px;
+        }
       }
     }
   }
