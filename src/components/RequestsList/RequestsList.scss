@@ -2,5 +2,17 @@
 
 .request-container {
   width: 430px;
-  background-color: $blue-gray-2;
+  background-color: $grey-12;
+
+  .request {
+    padding: 15px;
+    border-bottom: 1px solid $grey-7;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 28px;
+
+    &:nth-child(2) {
+      background-color: $grey-11;
+    }
+  }
 }

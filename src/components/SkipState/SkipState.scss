@@ -5,7 +5,8 @@
   align-items: center;
   justify-content: center;
   height: 100px;
-  background-color: $background-second;
+  background-color: $grey-12;
+  border-right: 3px solid $grey-9;
 
   .skip-button {
     border-radius: 50%;
