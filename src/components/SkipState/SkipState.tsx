@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { FC, useCallback, useMemo, useRef, useState } from 'react';
 import './SkipState.scss';
 import { Button, Input } from '@material-ui/core';
 import classNames from 'classnames';
@@ -11,35 +11,22 @@ interface SkipStateProps {
 const SkipState: FC<SkipStateProps> = ({ toNextVideo }) => {
   const [skips, setSkips] = useState<number>(0);
   const [maxSkips, setMaxSkips] = useState<number>(7);
-  const [isMaxSkips, setIsMaxSkips] = useState<boolean>(false);
   const skipService = useRef<SkipBotService>(new SkipBotService(setSkips));
   const skipsDisplay = useMemo(() => {
-    if (isMaxSkips) {
-      return maxSkips;
-    }
-
     if (skips < 0) {
       return 0;
     }
 
     return skips;
-  }, [isMaxSkips, maxSkips, skips]);
+  }, [skips]);
 
   const skipVideo = useCallback(() => {
     skipService.current.resetSkips();
     toNextVideo();
-    setIsMaxSkips(false);
   }, [toNextVideo]);
-
-  useEffect(() => {
-    if (skips >= maxSkips) {
-      setIsMaxSkips(true);
-    }
-  }, [maxSkips, skips]);
 
   const handleMaxSkipsChange = useCallback((e: any) => {
     setMaxSkips(Number(e.target.value));
-    setIsMaxSkips(false);
   }, []);
 
   return (
@@ -49,7 +36,7 @@ const SkipState: FC<SkipStateProps> = ({ toNextVideo }) => {
           .fill(null)
           .map((value, index) => (
             // eslint-disable-next-line react/no-array-index-key
-            <div className={classNames('skip-slice', { active: index < skips || isMaxSkips })} key={index} />
+            <div className={classNames('skip-slice', { active: index < skips })} key={index} />
           ))}
         <div className="skips-count">
           <span>{`${skipsDisplay} / `}</span>

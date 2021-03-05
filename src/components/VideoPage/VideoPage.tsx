@@ -11,13 +11,14 @@ import { RedemptionMessage } from '../../models/purchase';
 import { VideoData, VideoRequest } from '../../models/video';
 
 const YOUTUBE_API_KEY = 'AIzaSyCVPinFlGHMn0uzeWFjNTA38QOZBejOlSs';
+const validRewards = ['5d95f900-576b-4ef7-bd12-0b12e5b497e4'];
 
 const VideoPage: FC = () => {
   const { username } = useParams();
   const [requestQueue, setRequestQueue] = useState<VideoRequest[]>([]);
   const currentVideo = useMemo(() => requestQueue[0] || null, [requestQueue]);
 
-  const getVideoInfo = useCallback(async (id = 'vRVEZq8plc0'): Promise<VideoData> => {
+  const getVideoInfo = useCallback(async (id): Promise<VideoData> => {
     const { data } = await axios.get('https://www.googleapis.com/youtube/v3/videos', {
       params: { id, key: YOUTUBE_API_KEY, part: 'snippet,statistics' },
     });
@@ -40,7 +41,7 @@ const VideoPage: FC = () => {
       } = redemption;
       const videoId = parseYoutubeUrl(user_input);
 
-      if (videoId && id === '5d95f900-576b-4ef7-bd12-0b12e5b497e4') {
+      if (videoId && validRewards.includes(id)) {
         try {
           const videoData = await getVideoInfo(videoId);
 

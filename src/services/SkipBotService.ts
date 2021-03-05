@@ -29,7 +29,7 @@ export class SkipBotService {
   }
 
   resetSkips = (): void => {
-    this.skipMap = new Map<string, number>();
+    this.skipMap.clear();
     this.updateSkipCount();
   };
 
