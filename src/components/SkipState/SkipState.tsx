@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useMemo, useRef, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import './SkipState.scss';
 import { Button, Input } from '@material-ui/core';
 import classNames from 'classnames';
@@ -8,10 +8,11 @@ interface SkipStateProps {
   toNextVideo: () => void;
 }
 
+const skipService = new SkipBotService();
+
 const SkipState: FC<SkipStateProps> = ({ toNextVideo }) => {
   const [skips, setSkips] = useState<number>(0);
   const [maxSkips, setMaxSkips] = useState<number>(7);
-  const skipService = useRef<SkipBotService>(new SkipBotService(setSkips));
   const skipsDisplay = useMemo(() => {
     if (skips < 0) {
       return 0;
@@ -20,8 +21,12 @@ const SkipState: FC<SkipStateProps> = ({ toNextVideo }) => {
     return skips;
   }, [skips]);
 
+  useEffect(() => {
+    skipService.setSkipCount = setSkips;
+  }, []);
+
   const skipVideo = useCallback(() => {
-    skipService.current.resetSkips();
+    skipService.resetSkips();
     toNextVideo();
   }, [toNextVideo]);
 

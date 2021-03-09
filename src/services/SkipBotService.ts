@@ -16,12 +16,12 @@ const opts = {
 export class SkipBotService {
   private client: Client;
   skipMap: Map<string, number>;
-  setSkipCount: (count: number) => void;
+  setSkipCount: ((count: number) => void) | undefined;
 
-  constructor(setSkipCount: (count: number) => void) {
+  constructor() {
     this.client = new tmi.client(opts);
     this.skipMap = new Map<string, number>();
-    this.setSkipCount = setSkipCount;
+    this.setSkipCount = undefined;
 
     this.client.on('message', this.handleMessage);
 
@@ -34,13 +34,11 @@ export class SkipBotService {
   };
 
   updateSkipCount = (): void => {
-    let skipCont = 0;
+    const skipCont = Array.from(this.skipMap).reduce((accum, [, value]) => accum + value, 0);
 
-    this.skipMap.forEach((value): void => {
-      skipCont += value;
-    });
-
-    this.setSkipCount(skipCont);
+    if (this.setSkipCount) {
+      this.setSkipCount(skipCont);
+    }
   };
 
   handleMessage = (channel: string, tags: ChatUserstate, message: string): void => {
