@@ -8,4 +8,5 @@ export interface VideoData {
 export interface VideoRequest extends VideoData {
   videoId: string;
   username: string;
+  id: string;
 }

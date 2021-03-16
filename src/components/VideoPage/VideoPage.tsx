@@ -7,11 +7,12 @@ import RequestsList from '../RequestsList/RequestsList';
 import './VideoPage.scss';
 import { parseYoutubeUrl } from '../../utils/url.utils';
 import { TwitchPubSubService, updateConnection } from '../../services/PubSubService';
-import { RedemptionMessage } from '../../models/purchase';
+import { Redemption, RedemptionMessage, RedemptionStatus } from '../../models/purchase';
 import { VideoData, VideoRequest } from '../../models/video';
+import { getRedemptions, updateRedemptionStatus } from '../../api/twitchApi';
 
 const YOUTUBE_API_KEY = 'AIzaSyCVPinFlGHMn0uzeWFjNTA38QOZBejOlSs';
-const validRewards = ['5d95f900-576b-4ef7-bd12-0b12e5b497e4'];
+const validRewards = ['0ff42df7-3a02-4fc2-8539-c25bf026bdc4'];
 
 const VideoPage: FC = () => {
   const { username } = useParams();
@@ -32,26 +33,37 @@ const VideoPage: FC = () => {
     };
   }, []);
 
-  const handleNewRequest = useCallback(
-    async ({ redemption }: RedemptionMessage) => {
-      const {
-        user: { display_name },
-        reward: { id },
-        user_input,
-      } = redemption;
+  const parseRedemption = useCallback(
+    async ({ user, reward: { id: rewardId }, user_input, user_name, id }: Redemption): Promise<VideoRequest | null> => {
       const videoId = parseYoutubeUrl(user_input);
+      const name = user ? user.display_name : user_name;
 
-      if (videoId && validRewards.includes(id)) {
+      if (videoId && validRewards.includes(rewardId)) {
         try {
           const videoData = await getVideoInfo(videoId);
 
-          setRequestQueue((requests) => [...requests, { videoId, username: display_name, ...videoData }]);
+          return { videoId, username: name, id, ...videoData };
         } catch (e) {
-          console.log(e);
+          console.warn(e);
+
+          return null;
         }
+      } else {
+        return null;
       }
     },
     [getVideoInfo],
+  );
+
+  const handleNewRequest = useCallback(
+    async ({ redemption }: RedemptionMessage) => {
+      const newRequest = await parseRedemption(redemption);
+
+      if (newRequest) {
+        setRequestQueue((requests) => [...requests, newRequest]);
+      }
+    },
+    [parseRedemption],
   );
 
   useEffect(() => {
@@ -60,9 +72,22 @@ const VideoPage: FC = () => {
     updateConnection(twitchPubSubService, username);
   }, [getVideoInfo, handleNewRequest, username]);
 
+  const handleLoadMore = useCallback(async () => {
+    const redemptions = await getRedemptions(validRewards[0], username);
+    const newRequests = (await Promise.all(redemptions.map(parseRedemption))).filter(
+      (request) => request && !requestQueue.find(({ id }) => request.id === id),
+    ) as VideoRequest[];
+
+    setRequestQueue((requests) => [...newRequests, ...requests]);
+  }, [parseRedemption, requestQueue, username]);
+
   const toNextVideo = useCallback(() => {
-    setRequestQueue((requests) => requests.slice(1));
-  }, []);
+    setRequestQueue((requests) => {
+      updateRedemptionStatus(validRewards[0], username, requests[0].id, RedemptionStatus.Fulfilled);
+
+      return requests.slice(1);
+    });
+  }, [username]);
 
   return (
     <div className="page-container">
@@ -70,7 +95,7 @@ const VideoPage: FC = () => {
         <VideoPlayer id={currentVideo?.videoId} />
         <SkipState toNextVideo={toNextVideo} />
       </div>
-      <RequestsList requestQueue={requestQueue} />
+      <RequestsList requestQueue={requestQueue} onLoadMore={handleLoadMore} />
     </div>
   );
 };

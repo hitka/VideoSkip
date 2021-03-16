@@ -5,16 +5,25 @@ export interface PurchaseSortOption {
   order: SortOrder;
 }
 
-export interface RedemptionMessage {
-  redemption: {
+export interface Redemption {
+  id: string;
+  user_input: string;
+  reward: {
     id: string;
-    user_input: string;
-    reward: {
-      id: string;
-    };
-    user: {
-      display_name: string;
-      login: string;
-    };
   };
+  user: {
+    display_name: string;
+    login: string;
+  };
+  user_name: string;
+}
+
+export interface RedemptionMessage {
+  redemption: Redemption;
+}
+
+export enum RedemptionStatus {
+  Canceled = 'CANCELED',
+  Unfulfilled = 'UNFULFILLED',
+  Fulfilled = 'FULFILLED',
 }

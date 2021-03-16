@@ -1,5 +1,6 @@
 import axios from 'axios';
 import ENDPOINTS from '../constants/api.constants';
+import { Redemption, RedemptionStatus } from '../models/purchase';
 
 // eslint-disable-next-line import/prefer-default-export
 export const authenticateTwitch = async (code: string): Promise<void> => {
@@ -12,4 +13,19 @@ export const authenticateDA = async (code: string): Promise<void> => {
 
 export const closeTwitchRewards = async (): Promise<void> => {
   await axios.delete(ENDPOINTS.TWITCH_REWARDS);
+};
+
+export const getRedemptions = async (rewardId: string, username: string): Promise<Redemption[]> => {
+  const { data } = await axios.get(ENDPOINTS.TWITCH.REDEMPTIONS, { params: { rewardId, username } });
+
+  return data;
+};
+
+export const updateRedemptionStatus = async (
+  rewardId: string,
+  username: string,
+  redemptionId: string,
+  status: RedemptionStatus,
+): Promise<void> => {
+  await axios.patch(ENDPOINTS.TWITCH.REDEMPTIONS, { rewardId, username, redemptionId, status });
 };

@@ -3,6 +3,9 @@ const ENDPOINTS = {
   TWITCH_REWARDS: '/api/twitch/rewards',
   DA_AUTH: '/api/donationalerts/auth',
   TWITCH_CHANNEL_POINTS: '/api/twitch/channelPoints',
+  TWITCH: {
+    REDEMPTIONS: '/api/twitch/redemptions',
+  },
   USER: {
     USERNAME: '/api/username',
     AUC_SETTINGS: '/api/aucSettings',
