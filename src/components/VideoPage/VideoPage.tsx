@@ -93,7 +93,7 @@ const VideoPage: FC = () => {
     <div className="page-container">
       <div className="video-container">
         <VideoPlayer id={currentVideo?.videoId} />
-        <SkipState toNextVideo={toNextVideo} />
+        <SkipState toNextVideo={toNextVideo} currentVideo={currentVideo} />
       </div>
       <RequestsList requestQueue={requestQueue} onLoadMore={handleLoadMore} />
     </div>

@@ -18,7 +18,6 @@ const RequestsList: FC<RequestsListProps> = ({ requestQueue, onLoadMore }) => {
       <LoadingButton
         className="load-more-button"
         variant="outlined"
-        color="primary"
         onClick={withLoading(setIsLoading, onLoadMore)}
         isLoading={isLoading}
       >

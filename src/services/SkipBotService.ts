@@ -1,4 +1,4 @@
-import tmi, { ChatUserstate, Client } from 'tmi.js';
+import { ChatUserstate, Client } from 'tmi.js';
 
 const COMMANDS = {
   skip: 'Rasstroen',
@@ -17,9 +17,11 @@ export class SkipBotService {
   private client: Client;
   skipMap: Map<string, number>;
   setSkipCount: ((count: number) => void) | undefined;
+  ignoreUser?: string;
+  videoId?: string;
 
   constructor() {
-    this.client = new tmi.client(opts);
+    this.client = new Client(opts);
     this.skipMap = new Map<string, number>();
     this.setSkipCount = undefined;
 
@@ -42,6 +44,15 @@ export class SkipBotService {
   };
 
   handleMessage = (channel: string, tags: ChatUserstate, message: string): void => {
+    if (message === '!видос' && this.videoId) {
+      this.client.say('cabbakid', `@${tags['display-name']} https://youtu.be/${this.videoId}`);
+      return;
+    }
+
+    if (tags['display-name'] === this.ignoreUser) {
+      return;
+    }
+
     if (message.startsWith(COMMANDS.skip)) {
       this.skipMap.set(tags.username || '', 1);
       this.updateSkipCount();
