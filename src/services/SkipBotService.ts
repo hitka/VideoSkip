@@ -1,18 +1,5 @@
 import { ChatUserstate, Client } from 'tmi.js';
 
-const COMMANDS = {
-  skip: 'Rasstroen',
-  safe: 'Dovolen',
-};
-
-const opts = {
-  identity: {
-    username: 'Kozjar',
-    password: 'oauth:8ebzxq0hfa4yk66wpgf0l4pc4wtaci',
-  },
-  channels: ['cabbakid', 'kozjar'],
-};
-
 export class SkipBotService {
   private client: Client;
   skipMap: Map<string, number>;
@@ -20,8 +7,17 @@ export class SkipBotService {
   ignoreUser?: string;
   videoId?: string;
 
-  constructor() {
-    this.client = new Client(opts);
+  skipCommand = 'скип';
+  safeCommand = 'сейв';
+
+  constructor(channel: string) {
+    this.client = new Client({
+      identity: {
+        username: 'Kozjar',
+        password: 'oauth:8ebzxq0hfa4yk66wpgf0l4pc4wtaci',
+      },
+      channels: [channel],
+    });
     this.skipMap = new Map<string, number>();
     this.setSkipCount = undefined;
 
@@ -53,12 +49,12 @@ export class SkipBotService {
       return;
     }
 
-    if (message.startsWith(COMMANDS.skip)) {
+    if (message.startsWith(this.skipCommand)) {
       this.skipMap.set(tags.username || '', 1);
       this.updateSkipCount();
     }
 
-    if (message.startsWith(COMMANDS.safe)) {
+    if (message.startsWith(this.safeCommand)) {
       this.skipMap.set(tags.username || '', -1);
       this.updateSkipCount();
     }

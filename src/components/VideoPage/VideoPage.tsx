@@ -10,12 +10,14 @@ import { TwitchPubSubService, updateConnection } from '../../services/PubSubServ
 import { Redemption, RedemptionMessage, RedemptionStatus } from '../../models/purchase';
 import { VideoData, VideoRequest } from '../../models/video';
 import { getRedemptions, updateRedemptionStatus } from '../../api/twitchApi';
+import LoadingPage from '../LoadingPage/LoadingPage';
 
 const YOUTUBE_API_KEY = 'AIzaSyCVPinFlGHMn0uzeWFjNTA38QOZBejOlSs';
 const validRewards = ['0ff42df7-3a02-4fc2-8539-c25bf026bdc4'];
 
 const VideoPage: FC = () => {
   const { username } = useParams();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [requestQueue, setRequestQueue] = useState<VideoRequest[]>([]);
   const currentVideo = useMemo(() => requestQueue[0] || null, [requestQueue]);
 
@@ -66,11 +68,17 @@ const VideoPage: FC = () => {
     [parseRedemption],
   );
 
-  useEffect(() => {
+  const setConnection = useCallback(async () => {
     const twitchPubSubService = new TwitchPubSubService(handleNewRequest);
 
-    updateConnection(twitchPubSubService, username);
-  }, [getVideoInfo, handleNewRequest, username]);
+    await updateConnection(twitchPubSubService, username);
+
+    setIsLoading(false);
+  }, [handleNewRequest, username]);
+
+  useEffect(() => {
+    setConnection();
+  }, [setConnection]);
 
   const handleLoadMore = useCallback(async () => {
     const redemptions = await getRedemptions(validRewards[0], username);
@@ -89,6 +97,10 @@ const VideoPage: FC = () => {
     });
   }, [username]);
 
+  if (isLoading) {
+    return <LoadingPage helpText="Загрузка..." />;
+  }
+
   return (
     <div className="page-container">
       <div className="video-container">
@@ -96,6 +108,7 @@ const VideoPage: FC = () => {
         <SkipState toNextVideo={toNextVideo} currentVideo={currentVideo} />
       </div>
       <RequestsList requestQueue={requestQueue} onLoadMore={handleLoadMore} />
+      <div className="extra">created by Kozjar</div>
     </div>
   );
 };

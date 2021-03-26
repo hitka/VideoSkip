@@ -1,29 +1,7 @@
-import axios from 'axios';
-import { getUserToken, updateUserToken } from '../api/userApi';
+import { refreshToken } from '../api/userApi';
 import { RedemptionMessage } from '../models/purchase';
-
-const clientParams = {
-  client_id: '83xjs5k4yvqo0yn2cxu1v5lan2eeam',
-  client_secret: 'o0hlatq1flgpnoqt17f9dykhch1jci',
-};
-
-const refreshToken = async (username: string) => {
-  const { refresh_token, channelId } = await getUserToken(username);
-  const { data } = await axios.post(
-    'https://id.twitch.tv/oauth2/token',
-    {},
-    {
-      params: {
-        ...clientParams,
-        grant_type: 'refresh_token',
-        refresh_token,
-      },
-    },
-  );
-  await updateUserToken(username, data);
-
-  return { ...data, channelId };
-};
+import { store } from '../index';
+import { setUserId } from '../reducers/User/User';
 
 const PING_INTERVAL = 1000 * 10;
 const TWITCH_TOPICS = {
@@ -187,8 +165,10 @@ export class TwitchPubSubService {
 export const updateConnection = async (twitchPubSubService: TwitchPubSubService, username: string): Promise<void> => {
   const { access_token, channelId } = await refreshToken(username);
 
+  store.dispatch(setUserId(channelId));
+
   twitchPubSubService.unlisten(channelId, access_token);
-  twitchPubSubService.listen(channelId, access_token);
+  await twitchPubSubService.listen(channelId, access_token);
 
   console.log('reconnect success');
 };

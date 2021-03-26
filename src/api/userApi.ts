@@ -4,6 +4,7 @@ import ENDPOINTS from '../constants/api.constants';
 import { IntegrationFields, SettingFields } from '../reducers/AucSettings/AucSettings';
 import { UserData } from '../models/user.model';
 import { UserInfo } from '../reducers/User/User';
+import { SkipEmotes } from '../models/common.model';
 
 export const getUsername = async (): Promise<UserInfo> => {
   const { data } = await axios.get(ENDPOINTS.USER.USERNAME);
@@ -26,18 +27,22 @@ export const getUserData = async (): Promise<UserData> => {
 };
 
 export interface UserToken {
-  refresh_token: string;
+  access_token: string;
   channelId: string;
 }
 
-export const getUserToken = async (username: string): Promise<UserToken> => {
-  const { data } = await axios.get(ENDPOINTS.USER.TOKEN, { params: { username } });
+export const refreshToken = async (username: string): Promise<UserToken> => {
+  const { data } = await axios.get(ENDPOINTS.TWITCH.REFRESH_TOKEN, { params: { username } });
 
   return data;
 };
 
-export const updateUserToken = async (username: string, twitchToken: any): Promise<void> => {
-  const { data } = await axios.put(ENDPOINTS.USER.TOKEN, { username, twitchToken });
+export const getSkipEmotes = async (username: string): Promise<SkipEmotes> => {
+  const { data } = await axios.get(ENDPOINTS.USER.SKIP_EMOTES, { params: { username } });
 
   return data;
+};
+
+export const updateSkipEmotes = async (username: string, skipEmotes: SkipEmotes): Promise<void> => {
+  await axios.post(ENDPOINTS.USER.SKIP_EMOTES, { username, skipEmotes });
 };

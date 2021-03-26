@@ -5,6 +5,7 @@ const ENDPOINTS = {
   TWITCH_CHANNEL_POINTS: '/api/twitch/channelPoints',
   TWITCH: {
     REDEMPTIONS: '/api/twitch/redemptions',
+    REFRESH_TOKEN: '/api/twitch/refreshToken',
   },
   USER: {
     USERNAME: '/api/username',
@@ -13,6 +14,7 @@ const ENDPOINTS = {
     DATA: '/api/user/userData',
     INTEGRATION: '/api/integration',
     TOKEN: '/api/user/token',
+    SKIP_EMOTES: '/api/user/skipEmotes',
   },
 };
 

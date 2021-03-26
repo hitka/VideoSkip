@@ -4,11 +4,12 @@ import { Collection, Emote, EmoteFetcher } from '@mkody/twitch-emoticons';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../reducers';
 import './TwitchEmotesList..scss';
+import { EmoteData } from '../../models/common.model';
 
 const fetcher = new EmoteFetcher();
 
 interface TwitchEmotesListProps {
-  setActiveEmote: (emote: string) => void;
+  setActiveEmote: (emote: EmoteData) => void;
 }
 
 const TwitchEmotesList: FC<TwitchEmotesListProps> = ({ setActiveEmote }) => {
@@ -34,7 +35,9 @@ const TwitchEmotesList: FC<TwitchEmotesListProps> = ({ setActiveEmote }) => {
       return (
         <div className="emotes-group">
           {Array.from(emotes.values()).map((emote) => {
-            const handleClick = (): void => setActiveEmote(emote.toLink(2));
+            const handleClick = (): void => {
+              setActiveEmote({ image: emote.toLink(1), code: emote.code });
+            };
 
             return (
               <IconButton key={emote.id} className="emote-button" onClick={handleClick}>

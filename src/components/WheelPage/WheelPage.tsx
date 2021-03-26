@@ -6,12 +6,11 @@ import useWheel from '../../hooks/useWheel';
 import { RootState } from '../../reducers';
 import { WheelItem } from '../../models/wheel.model';
 import { getTotalSize, getWheelColor } from '../../utils/common.utils';
-import TwitchEmotesList from '../TwitchEmotesList/TwitchEmotesList';
 import './WheelPage.scss';
 
 const WheelPage: FC = () => {
   const { slots } = useSelector((rootReducer: RootState) => rootReducer.slots);
-  const [activeEmote, setActiveEmote] = useState<string | undefined>(undefined);
+  const [activeEmote] = useState<string | undefined>(undefined);
   const wheelItems = useMemo(() => {
     const items = slots.map<WheelItem>(({ id, name, amount }) => ({
       id: id.toString(),
@@ -40,7 +39,6 @@ const WheelPage: FC = () => {
         <Button variant="contained" color="primary" onClick={spin}>
           Крутить
         </Button>
-        <TwitchEmotesList setActiveEmote={setActiveEmote} />
       </div>
     </PageContainer>
   );

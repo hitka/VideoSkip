@@ -1,0 +1,48 @@
+@import "../../styles/colors";
+
+.emote-select {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  margin: 0 15px;
+  width: 60px;
+  height: 60px;
+  background-color: $grey-8;
+  border: 2px solid $grey-3;
+  border-radius: 50%;
+  color: white;
+  outline: none;
+
+  &:hover {
+    cursor: pointer;
+
+    .emote-select-shadow {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      background-color: rgba($grey-12, 0.25);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+  }
+
+  .MuiSvgIcon-root {
+    margin-top: 5px;
+    font-size: 34px;
+  }
+
+  &-title {
+    position: absolute;
+    display: flex;
+    font-size: 16px;
+    font-weight: 400;
+    left: 50%;
+    top: 58px;
+    transform: translate(-50%,-50%);
+    border: 2px solid $grey-3;
+    background-color: $blue-gray-3;
+    padding: 2px 8px;
+  }
+}

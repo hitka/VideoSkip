@@ -9,3 +9,13 @@ export interface MenuItem {
   IconComponent: StyledComponent<StyledProps>;
   disabled?: boolean;
 }
+
+export interface EmoteData {
+  image: string;
+  code: string;
+}
+
+export interface SkipEmotes {
+  skip?: EmoteData;
+  safe?: EmoteData;
+}
