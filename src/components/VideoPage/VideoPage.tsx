@@ -13,7 +13,7 @@ import { getRedemptions, updateRedemptionStatus } from '../../api/twitchApi';
 import LoadingPage from '../LoadingPage/LoadingPage';
 
 const YOUTUBE_API_KEY = 'AIzaSyCVPinFlGHMn0uzeWFjNTA38QOZBejOlSs';
-const validRewards = ['0ff42df7-3a02-4fc2-8539-c25bf026bdc4'];
+const validRewards = ['0ff42df7-3a02-4fc2-8539-c25bf026bdc4', 'b07bdfaa-9c5b-4d0b-a14d-cbc7e6914027'];
 
 const VideoPage: FC = () => {
   const { username } = useParams();
