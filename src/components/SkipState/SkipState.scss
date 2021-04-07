@@ -1,12 +1,22 @@
 @import "../../styles/colors";
 
 .skip-container {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   height: 100px;
   background-color: $grey-12;
   border-right: 3px solid $grey-9;
+
+  .player-actions {
+    position: absolute;
+    right: 30px;
+
+    svg {
+      font-size: 40px;
+    }
+  }
 
   .skip-button {
     border-radius: 50%;

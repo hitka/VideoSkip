@@ -8,6 +8,7 @@ import EmoteSelect from '../EmoteSelect/EmoteSelect';
 import { EmoteData, SkipEmotes } from '../../models/common.model';
 import { getSkipEmotes, updateSkipEmotes } from '../../api/userApi';
 import { RootState } from '../../reducers';
+import PlayerActions from '../PlayerActions/PlayerActions';
 
 interface SkipStateProps {
   toNextVideo: () => void;
@@ -124,6 +125,9 @@ const SkipState: FC<SkipStateProps> = ({ toNextVideo, currentVideo }) => {
       <Button variant="contained" color={currentColor} onClick={skipVideo} className="skip-button">
         Скип
       </Button>
+      <div className="player-actions">
+        <PlayerActions />
+      </div>
     </div>
   );
 };
