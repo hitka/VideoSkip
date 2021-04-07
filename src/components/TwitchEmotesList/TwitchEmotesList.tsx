@@ -22,11 +22,14 @@ const TwitchEmotesList: FC<TwitchEmotesListProps> = ({ setActiveEmote }) => {
         fetcher.fetchTwitchEmotes(Number(userId)).catch(() => undefined),
         fetcher.fetchBTTVEmotes(Number(userId)).catch(() => undefined),
         fetcher.fetchFFZEmotes(Number(userId)).catch(() => undefined),
-      ]).then(setUserEmotes);
+        fetcher.fetchTwitchEmotes().catch(() => undefined),
+      ])
+        .then(setUserEmotes)
+        .catch(() => setUserEmotes([]));
     }
   }, [userId]);
 
-  const crateEmoteList = useCallback(
+  const createEmoteList = useCallback(
     (emotes?: Collection<string, Emote>) => {
       if (!emotes) {
         return null;
@@ -53,15 +56,7 @@ const TwitchEmotesList: FC<TwitchEmotesListProps> = ({ setActiveEmote }) => {
 
   return (
     <div className="emotes-container">
-      {userEmotes ? (
-        <>
-          {crateEmoteList(userEmotes[0])}
-          {crateEmoteList(userEmotes[1])}
-          {crateEmoteList(userEmotes[2])}
-        </>
-      ) : (
-        <CircularProgress className="emotes-loading" />
-      )}
+      {userEmotes ? <>{userEmotes.map(createEmoteList)}</> : <CircularProgress className="emotes-loading" />}
     </div>
   );
 };
