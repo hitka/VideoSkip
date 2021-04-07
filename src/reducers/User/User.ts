@@ -5,14 +5,14 @@ export interface UserInfo {
   userId: string | null;
 }
 
-interface UserState extends UserInfo {
-  hasDAAuth: boolean;
+export interface UserState extends UserInfo {
+  skipRewardId: string | null;
 }
 
 const initialState: UserState = {
   username: null,
   userId: null,
-  hasDAAuth: false,
+  skipRewardId: null,
 };
 
 const userSlice = createSlice({
@@ -25,12 +25,12 @@ const userSlice = createSlice({
     setUserId(state, action: PayloadAction<string | null>): void {
       state.userId = action.payload;
     },
-    setHasDAAuth(state, action: PayloadAction<boolean>): void {
-      state.hasDAAuth = action.payload;
+    setSkipRewardId(state, action: PayloadAction<string | null>): void {
+      state.skipRewardId = action.payload;
     },
   },
 });
 
-export const { setUsername, setHasDAAuth, setUserId } = userSlice.actions;
+export const { setUsername, setUserId, setSkipRewardId } = userSlice.actions;
 
 export default userSlice.reducer;

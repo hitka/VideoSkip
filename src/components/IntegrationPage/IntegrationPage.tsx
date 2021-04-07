@@ -9,7 +9,6 @@ import { initialState, IntegrationFields, setIntegration } from '../../reducers/
 import LoadingButton from '../LoadingButton/LoadingButton';
 import withLoading from '../../decorators/withLoading';
 import { updateIntegration } from '../../api/userApi';
-import DaIntegration from './DAIntegration/DAIntegration';
 import { getDirtyValues } from '../../utils/common.utils';
 import ConfirmFormOnLeave from '../ConfirmFormOnLeave/ConfirmFormOnLeave';
 
@@ -58,7 +57,6 @@ const IntegrationPage: FC = () => {
       <form className="settings" onSubmit={handleSubmit(onSubmit)}>
         <ConfirmFormOnLeave isDirtyForm={isDirty} onSubmit={handleSubmit(onSubmit)} />
         <TwitchIntegration control={control} />
-        <DaIntegration control={control} />
         <div style={{ marginTop: 40 }}>
           <LoadingButton
             isLoading={isSubmitting}

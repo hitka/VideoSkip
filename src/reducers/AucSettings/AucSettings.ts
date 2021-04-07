@@ -2,7 +2,7 @@ import { createSlice, PayloadAction, ThunkDispatch } from '@reduxjs/toolkit';
 import { Action } from 'redux';
 import mergewith from 'lodash.mergewith';
 import { getUserData } from '../../api/userApi';
-import { setUsername, setHasDAAuth, setUserId } from '../User/User';
+import { setSkipRewardId, setUserId, setUsername } from '../User/User';
 
 export interface SettingFields {
   startTime?: number;
@@ -94,17 +94,11 @@ const aucSettingsSlice = createSlice({
 export const { setAucSettings, setIntegration } = aucSettingsSlice.actions;
 
 export const loadUserData = async (dispatch: ThunkDispatch<{}, {}, Action>): Promise<void> => {
-  const { username, userId, settings, integration, hasDAAuth } = await getUserData();
+  const { username, userId, skipRewardId } = await getUserData();
 
-  if (settings) {
-    dispatch(setAucSettings(settings));
-  }
-  if (integration) {
-    dispatch(setIntegration(integration));
-  }
   dispatch(setUsername(username));
   dispatch(setUserId(userId));
-  dispatch(setHasDAAuth(hasDAAuth));
+  dispatch(setSkipRewardId(skipRewardId));
 };
 
 export default aucSettingsSlice.reducer;

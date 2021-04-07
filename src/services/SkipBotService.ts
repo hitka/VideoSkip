@@ -22,6 +22,8 @@ export class SkipBotService {
     this.setSkipCount = undefined;
 
     this.client.on('message', this.handleMessage);
+    this.client.on('connected', () => console.log('connected'));
+    this.client.on('disconnected', () => console.log('disconnected'));
 
     this.client.connect();
   }

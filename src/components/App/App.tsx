@@ -6,6 +6,9 @@ import ROUTES from '../../constants/routes.constants';
 import { theme } from '../../constants/theme.constants';
 import AlertsContainer from '../AlertsContainer/AlertsContainer';
 import VideoPage from '../VideoPage/VideoPage';
+import TwitchRedirect from '../TwitchRedirect/TwitchRedirect';
+import LoginPage from '../LoginPage/LoginPage';
+import PrivateRoute from '../PrivateRoute/PrivateRoute';
 
 const drawerWidth = 240;
 
@@ -59,8 +62,14 @@ const App: React.FC = () => {
         <main className={classes.content}>
           <AlertsContainer />
           <Switch>
-            <Route exact path={ROUTES.VIDEO_SKIP}>
+            <PrivateRoute exact path={ROUTES.VIDEO_SKIP}>
               <VideoPage />
+            </PrivateRoute>
+            <Route exact path={ROUTES.TWITCH_REDIRECT}>
+              <TwitchRedirect />
+            </Route>
+            <Route exact path={ROUTES.LOGIN}>
+              <LoginPage />
             </Route>
           </Switch>
         </main>

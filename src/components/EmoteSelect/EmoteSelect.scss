@@ -5,8 +5,8 @@
   justify-content: center;
   position: relative;
   margin: 0 15px;
-  width: 60px;
-  height: 60px;
+  width: 70px;
+  height: 70px;
   background-color: $grey-8;
   border: 2px solid $grey-3;
   border-radius: 50%;
@@ -39,10 +39,10 @@
     font-size: 16px;
     font-weight: 400;
     left: 50%;
-    top: 58px;
+    top: 62px;
     transform: translate(-50%,-50%);
     border: 2px solid $grey-3;
     background-color: $blue-gray-3;
-    padding: 2px 8px;
+    padding: 2px 12px;
   }
 }

@@ -1,12 +1,13 @@
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import './SkipState.scss';
 import { Button, Input, LinearProgress } from '@material-ui/core';
-import { useParams } from 'react-router';
+import { useSelector } from 'react-redux';
 import { SkipBotService } from '../../services/SkipBotService';
 import { VideoRequest } from '../../models/video';
 import EmoteSelect from '../EmoteSelect/EmoteSelect';
 import { EmoteData, SkipEmotes } from '../../models/common.model';
 import { getSkipEmotes, updateSkipEmotes } from '../../api/userApi';
+import { RootState } from '../../reducers';
 
 interface SkipStateProps {
   toNextVideo: () => void;
@@ -14,7 +15,7 @@ interface SkipStateProps {
 }
 
 const SkipState: FC<SkipStateProps> = ({ toNextVideo, currentVideo }) => {
-  const { username } = useParams();
+  const { username } = useSelector((root: RootState) => root.user);
   const [skips, setSkips] = useState<number>(0);
   const [maxSkips, setMaxSkips] = useState<number>(7);
   const [skipService, setSkipService] = useState<SkipBotService>();
@@ -28,15 +29,17 @@ const SkipState: FC<SkipStateProps> = ({ toNextVideo, currentVideo }) => {
   }, [skips]);
 
   useEffect(() => {
-    const skipServiceInstance = new SkipBotService(username);
+    if (username) {
+      const skipServiceInstance = new SkipBotService(username);
 
-    skipServiceInstance.setSkipCount = setSkips;
+      skipServiceInstance.setSkipCount = setSkips;
 
-    setSkipService(skipServiceInstance);
+      setSkipService(skipServiceInstance);
+    }
   }, [username]);
 
   const loadEmotes = useCallback(async () => {
-    const emotes = await getSkipEmotes(username);
+    const emotes = username && (await getSkipEmotes(username));
 
     if (emotes) {
       setSkipEmotes(emotes);
@@ -89,7 +92,7 @@ const SkipState: FC<SkipStateProps> = ({ toNextVideo, currentVideo }) => {
   const handleSkipEmoteChange = useCallback(
     (skip: EmoteData): void => {
       setSkipEmotes((emotes) => {
-        updateSkipEmotes(username, { ...emotes, skip });
+        updateSkipEmotes(username || '', { ...emotes, skip });
 
         return { ...emotes, skip };
       });
@@ -99,7 +102,8 @@ const SkipState: FC<SkipStateProps> = ({ toNextVideo, currentVideo }) => {
   const handleSafeEmoteChange = useCallback(
     (safe: EmoteData): void => {
       setSkipEmotes((emotes) => {
-        updateSkipEmotes(username, { ...emotes, safe });
+        updateSkipEmotes(username || '', { ...emotes, safe });
+
         return { ...emotes, safe };
       });
     },

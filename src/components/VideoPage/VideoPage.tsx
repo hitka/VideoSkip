@@ -1,6 +1,6 @@
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router';
+import { useDispatch, useSelector } from 'react-redux';
 import VideoPlayer from '../VideoPlayer/VideoPlayer';
 import SkipState from '../SkipState/SkipState';
 import RequestsList from '../RequestsList/RequestsList';
@@ -11,12 +11,15 @@ import { Redemption, RedemptionMessage, RedemptionStatus } from '../../models/pu
 import { VideoData, VideoRequest } from '../../models/video';
 import { getRedemptions, updateRedemptionStatus } from '../../api/twitchApi';
 import LoadingPage from '../LoadingPage/LoadingPage';
+import { RootState } from '../../reducers';
+import { loadUserData } from '../../reducers/AucSettings/AucSettings';
 
 const YOUTUBE_API_KEY = 'AIzaSyCVPinFlGHMn0uzeWFjNTA38QOZBejOlSs';
 const validRewards = ['5d95f900-576b-4ef7-bd12-0b12e5b497e4', 'b07bdfaa-9c5b-4d0b-a14d-cbc7e6914027'];
 
 const VideoPage: FC = () => {
-  const { username } = useParams();
+  const dispatch = useDispatch();
+  const { username, skipRewardId } = useSelector((root: RootState) => root.user);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [requestQueue, setRequestQueue] = useState<VideoRequest[]>([]);
   const currentVideo = useMemo(() => requestQueue[0] || null, [requestQueue]);
@@ -40,7 +43,7 @@ const VideoPage: FC = () => {
       const videoId = parseYoutubeUrl(user_input);
       const name = user ? user.display_name : user_name;
 
-      if (videoId && validRewards.includes(rewardId)) {
+      if (videoId && rewardId === skipRewardId) {
         try {
           const videoData = await getVideoInfo(videoId);
 
@@ -54,7 +57,7 @@ const VideoPage: FC = () => {
         return null;
       }
     },
-    [getVideoInfo],
+    [getVideoInfo, skipRewardId],
   );
 
   const handleNewRequest = useCallback(
@@ -69,36 +72,46 @@ const VideoPage: FC = () => {
   );
 
   const setConnection = useCallback(async () => {
-    const twitchPubSubService = new TwitchPubSubService(handleNewRequest);
+    if (username) {
+      const twitchPubSubService = new TwitchPubSubService(handleNewRequest);
 
-    await updateConnection(twitchPubSubService, username);
+      await updateConnection(twitchPubSubService, username);
 
-    setIsLoading(false);
+      setIsLoading(false);
+    }
   }, [handleNewRequest, username]);
+
+  useEffect(() => {
+    dispatch(loadUserData);
+  }, [dispatch]);
 
   useEffect(() => {
     setConnection();
   }, [setConnection]);
 
   const handleLoadMore = useCallback(async () => {
-    const redemptions = await getRedemptions(validRewards[0], username);
-    const newRequests = (await Promise.all(redemptions.map(parseRedemption))).filter(
-      (request) => request && !requestQueue.find(({ id }) => request.id === id),
-    ) as VideoRequest[];
+    if (skipRewardId && username) {
+      const redemptions = await getRedemptions(skipRewardId, username);
+      const newRequests = (await Promise.all(redemptions.map(parseRedemption))).filter(
+        (request) => request && !requestQueue.find(({ id }) => request.id === id),
+      ) as VideoRequest[];
 
-    setRequestQueue((requests) => [...newRequests, ...requests]);
-  }, [parseRedemption, requestQueue, username]);
+      setRequestQueue((requests) => [...newRequests, ...requests]);
+    }
+  }, [parseRedemption, requestQueue, skipRewardId, username]);
 
   const toNextVideo = useCallback(() => {
     setRequestQueue((requests) => {
-      updateRedemptionStatus(validRewards[0], username, requests[0].id, RedemptionStatus.Fulfilled);
+      if (username) {
+        updateRedemptionStatus(validRewards[0], username, requests[0].id, RedemptionStatus.Fulfilled);
+      }
 
       return requests.slice(1);
     });
   }, [username]);
 
   if (isLoading) {
-    return <LoadingPage helpText="Загрузка..." />;
+    return <LoadingPage helpText="Загрузка... (пока что возможна долгая загрузка, в будущем оптимизирую это дело)" />;
   }
 
   return (

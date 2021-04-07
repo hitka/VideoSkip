@@ -13,7 +13,7 @@ const ROUTES = {
   HELP: '/help',
   INTEGRATION: '/integration',
   CHAT_WHEEL: '/chatWheel/:channel',
-  VIDEO_SKIP: '/:username',
+  VIDEO_SKIP: '/twitchPlayer',
 };
 
 export default ROUTES;

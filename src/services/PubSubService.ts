@@ -73,7 +73,7 @@ export class TwitchPubSubService {
   };
 
   pingConnection = (): void => {
-    console.log('ping');
+    // console.log('ping');
     this.sendMessage(REQUEST_MESSAGE_TYPE.PING);
   };
 

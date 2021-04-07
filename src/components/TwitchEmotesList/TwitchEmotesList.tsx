@@ -43,7 +43,7 @@ const TwitchEmotesList: FC<TwitchEmotesListProps> = ({ setActiveEmote }) => {
             };
 
             return (
-              <IconButton key={emote.id} className="emote-button" onClick={handleClick}>
+              <IconButton key={emote.code} className="emote-button" onClick={handleClick}>
                 <img alt="emote" src={emote.toLink(0)} />
               </IconButton>
             );
