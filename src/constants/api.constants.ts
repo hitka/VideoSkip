@@ -4,8 +4,8 @@ const ENDPOINTS = {
   DA_AUTH: '/api/donationalerts/auth',
   TWITCH_CHANNEL_POINTS: '/api/twitch/channelPoints',
   TWITCH: {
-    REDEMPTIONS: '/api/twitch/redemptions',
-    REFRESH_TOKEN: '/api/twitch/refreshToken',
+    REDEMPTIONS: '/api/player/redemptions',
+    REFRESH_TOKEN: '/api/player/refreshToken',
   },
   USER: {
     USERNAME: '/api/username',
