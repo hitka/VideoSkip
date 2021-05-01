@@ -13,8 +13,8 @@ export class SkipBotService {
   constructor(channel: string) {
     this.client = new Client({
       identity: {
-        username: 'Kozjar',
-        password: 'oauth:8ebzxq0hfa4yk66wpgf0l4pc4wtaci',
+        username: 'skipsome_bot',
+        password: 'oauth:x5mb08s1lyszezcmqoquz0du10jxbk',
       },
       channels: [channel],
     });
