@@ -15,7 +15,6 @@ import { RootState } from '../../reducers';
 import { loadUserData } from '../../reducers/AucSettings/AucSettings';
 
 const YOUTUBE_API_KEY = 'AIzaSyCVPinFlGHMn0uzeWFjNTA38QOZBejOlSs';
-const validRewards = ['5d95f900-576b-4ef7-bd12-0b12e5b497e4', 'b07bdfaa-9c5b-4d0b-a14d-cbc7e6914027'];
 
 const VideoPage: FC = () => {
   const dispatch = useDispatch();
@@ -103,7 +102,7 @@ const VideoPage: FC = () => {
   const toNextVideo = useCallback(() => {
     setRequestQueue((requests) => {
       if (username) {
-        updateRedemptionStatus(validRewards[0], username, requests[0].id, RedemptionStatus.Fulfilled);
+        updateRedemptionStatus(username, requests[0].id, RedemptionStatus.Fulfilled);
       }
 
       return requests.slice(1);

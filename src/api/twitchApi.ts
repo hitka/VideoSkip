@@ -22,10 +22,9 @@ export const getRedemptions = async (rewardId: string, username: string): Promis
 };
 
 export const updateRedemptionStatus = async (
-  rewardId: string,
   username: string,
   redemptionId: string,
   status: RedemptionStatus,
 ): Promise<void> => {
-  await axios.patch(ENDPOINTS.TWITCH.REDEMPTIONS, { rewardId, username, redemptionId, status });
+  await axios.patch(ENDPOINTS.TWITCH.REDEMPTIONS, { username, redemptionId, status });
 };
