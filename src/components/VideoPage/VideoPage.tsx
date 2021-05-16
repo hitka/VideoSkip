@@ -1,6 +1,7 @@
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
+import dayjs from 'dayjs';
 import VideoPlayer from '../VideoPlayer/VideoPlayer';
 import SkipState from '../SkipState/SkipState';
 import RequestsList from '../RequestsList/RequestsList';
@@ -25,15 +26,17 @@ const VideoPage: FC = () => {
 
   const getVideoInfo = useCallback(async (id): Promise<VideoData> => {
     const { data } = await axios.get('https://www.googleapis.com/youtube/v3/videos', {
-      params: { id, key: YOUTUBE_API_KEY, part: 'snippet,statistics' },
+      params: { id, key: YOUTUBE_API_KEY, part: 'snippet,statistics,contentDetails' },
     });
     const { viewCount, likeCount, dislikeCount } = data.items[0].statistics;
+    const { duration } = data.items[0].contentDetails;
 
     return {
       title: data.items[0].snippet.title,
       dislikeCount: Number(dislikeCount),
       likeCount: Number(likeCount),
       viewCount: Number(viewCount),
+      duration: dayjs.duration(duration).asMilliseconds(),
     };
   }, []);
 
@@ -117,7 +120,7 @@ const VideoPage: FC = () => {
     <div className="page-container">
       <div className="video-container">
         <VideoPlayer id={currentVideo?.videoId} />
-        <SkipState toNextVideo={toNextVideo} currentVideo={currentVideo} />
+        <SkipState toNextVideo={toNextVideo} currentVideo={currentVideo} videos={requestQueue} />
       </div>
       <RequestsList requestQueue={requestQueue} onLoadMore={handleLoadMore} />
       <div className="extra">created by Kozjar</div>

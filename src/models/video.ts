@@ -3,6 +3,7 @@ export interface VideoData {
   viewCount: number;
   likeCount: number;
   dislikeCount: number;
+  duration: number;
 }
 
 export interface VideoRequest extends VideoData {

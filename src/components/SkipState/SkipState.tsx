@@ -13,9 +13,10 @@ import PlayerActions from '../PlayerActions/PlayerActions';
 interface SkipStateProps {
   toNextVideo: () => void;
   currentVideo?: VideoRequest;
+  videos: VideoRequest[];
 }
 
-const SkipState: FC<SkipStateProps> = ({ toNextVideo, currentVideo }) => {
+const SkipState: FC<SkipStateProps> = ({ toNextVideo, currentVideo, videos }) => {
   const { username } = useSelector((root: RootState) => root.user);
   const [skips, setSkips] = useState<number>(0);
   const [maxSkips, setMaxSkips] = useState<number>(7);
@@ -58,6 +59,12 @@ const SkipState: FC<SkipStateProps> = ({ toNextVideo, currentVideo }) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentVideo?.username, currentVideo?.videoId]);
+
+  useEffect(() => {
+    if (skipService) {
+      skipService.videos = videos;
+    }
+  }, [skipService, videos]);
 
   const skipVideo = useCallback(() => {
     if (skipService) {

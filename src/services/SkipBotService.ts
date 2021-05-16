@@ -1,4 +1,12 @@
 import { ChatUserstate, Client } from 'tmi.js';
+import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
+import relativeTime from 'dayjs/plugin/relativeTime';
+
+import { VideoRequest } from '../models/video';
+
+dayjs.extend(duration);
+dayjs.extend(relativeTime);
 
 export class SkipBotService {
   private client: Client;
@@ -6,11 +14,14 @@ export class SkipBotService {
   setSkipCount: ((count: number) => void) | undefined;
   ignoreUser?: string;
   videoId?: string;
+  videos: VideoRequest[] = [];
+  channel: string;
 
   skipCommand = 'скип';
   safeCommand = 'сейв';
 
   constructor(channel: string) {
+    this.channel = channel;
     this.client = new Client({
       identity: {
         username: 'skipsome_bot',
@@ -41,9 +52,36 @@ export class SkipBotService {
     }
   };
 
+  logCurrentVideo = (tags: ChatUserstate): void => {
+    this.client.say(this.channel, `@${tags['display-name']} https://youtu.be/${this.videoId}`);
+  };
+
+  logUserPosition = (tags: ChatUserstate): void => {
+    const nextUserVideo = this.videos?.findIndex(({ username }) => username === tags['display-name']) || -1;
+
+    if (nextUserVideo === -1) {
+      this.client.say(this.channel, 'Вы еще не заказали видео');
+    }
+
+    const length = this.videos?.slice(0, nextUserVideo).reduce<number>((accum, { duration: d }) => accum + d, 0) || 0;
+
+    this.client.say(
+      this.channel,
+      `@${tags['display-name']} твое видео на позиции ${nextUserVideo + 1} в очереди, осталось ${dayjs
+        .duration(length)
+        .humanize()}`,
+    );
+  };
+
+  commandsMap: Record<string, (tags: ChatUserstate) => void> = {
+    '!видос': this.logCurrentVideo,
+    '!myvid': this.logUserPosition,
+  };
+
   handleMessage = (channel: string, tags: ChatUserstate, message: string): void => {
-    if (message === '!видос' && this.videoId) {
-      this.client.say('cabbakid', `@${tags['display-name']} https://youtu.be/${this.videoId}`);
+    if (this.commandsMap[message]) {
+      this.commandsMap[message](tags);
+
       return;
     }
 
