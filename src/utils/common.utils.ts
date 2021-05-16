@@ -35,6 +35,10 @@ export const getCookie = (name: string): string => {
   return (match && match[2]) || '';
 };
 
+export const removeCoockie = (name: string): void => {
+  document.cookie = `${name}=; Max-Age=0`;
+};
+
 export const sortSlots = (slots: Slot[]): Slot[] => {
   return [...slots].sort((a: Slot, b: Slot) => {
     if (a.amount === undefined) {

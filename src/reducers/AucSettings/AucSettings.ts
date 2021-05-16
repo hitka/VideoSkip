@@ -93,12 +93,18 @@ const aucSettingsSlice = createSlice({
 
 export const { setAucSettings, setIntegration } = aucSettingsSlice.actions;
 
-export const loadUserData = async (dispatch: ThunkDispatch<{}, {}, Action>): Promise<void> => {
-  const { username, userId, skipRewardId } = await getUserData();
+export const loadUserData = (handleError: (status: number) => void) => async (
+  dispatch: ThunkDispatch<{}, {}, Action>,
+): Promise<void> => {
+  try {
+    const { username, userId, skipRewardId } = await getUserData();
 
-  dispatch(setUsername(username));
-  dispatch(setUserId(userId));
-  dispatch(setSkipRewardId(skipRewardId));
+    dispatch(setUsername(username));
+    dispatch(setUserId(userId));
+    dispatch(setSkipRewardId(skipRewardId));
+  } catch (e) {
+    handleError(e.status);
+  }
 };
 
 export default aucSettingsSlice.reducer;

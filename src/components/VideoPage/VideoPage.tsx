@@ -14,6 +14,9 @@ import { getRedemptions, updateRedemptionStatus } from '../../api/twitchApi';
 import LoadingPage from '../LoadingPage/LoadingPage';
 import { RootState } from '../../reducers';
 import { loadUserData } from '../../reducers/AucSettings/AucSettings';
+import history from '../../constants/history';
+import ROUTES from '../../constants/routes.constants';
+import { removeCoockie } from '../../utils/common.utils';
 
 const YOUTUBE_API_KEY = 'AIzaSyCVPinFlGHMn0uzeWFjNTA38QOZBejOlSs';
 
@@ -83,9 +86,14 @@ const VideoPage: FC = () => {
     }
   }, [handleNewRequest, username]);
 
+  const redirectToLogin = useCallback(() => {
+    history.push(ROUTES.LOGIN);
+    removeCoockie('jwtToken');
+  }, []);
+
   useEffect(() => {
-    dispatch(loadUserData);
-  }, [dispatch]);
+    dispatch(loadUserData(redirectToLogin));
+  }, [dispatch, redirectToLogin]);
 
   useEffect(() => {
     setConnection();
