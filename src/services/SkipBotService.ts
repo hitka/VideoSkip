@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import relativeTime from 'dayjs/plugin/relativeTime';
 
-import { VideoRequest } from '../models/video';
+import { VideoRequest, Vote, VoteCommand } from '../models/video';
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
@@ -78,6 +78,13 @@ export class SkipBotService {
     '!myvid': this.logUserPosition,
   };
 
+  handleVote = ({ userId, command }: Vote): void => {
+    const mapValue = command === VoteCommand.Skip ? 1 : -1;
+
+    this.skipMap.set(userId, mapValue);
+    this.updateSkipCount();
+  };
+
   handleMessage = (channel: string, tags: ChatUserstate, message: string): void => {
     if (this.commandsMap[message]) {
       this.commandsMap[message](tags);
@@ -90,13 +97,11 @@ export class SkipBotService {
     }
 
     if (message.startsWith(this.skipCommand)) {
-      this.skipMap.set(tags.username || '', 1);
-      this.updateSkipCount();
+      this.handleVote({ userId: tags['user-id'] || '', command: VoteCommand.Skip });
     }
 
     if (message.startsWith(this.safeCommand)) {
-      this.skipMap.set(tags.username || '', -1);
-      this.updateSkipCount();
+      this.handleVote({ userId: tags['user-id'] || '', command: VoteCommand.Safe });
     }
   };
 }

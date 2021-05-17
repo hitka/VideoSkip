@@ -3,12 +3,10 @@ import { Action } from 'redux';
 import axios from 'axios';
 import WebSocketService from '../../services/WebSocketService';
 import { Purchase } from '../Purchases/Purchases';
-import { MESSAGE_TYPES } from '../../constants/webSocket.constants';
 import { getWebsocketUrl } from '../../utils/url.utils';
 import { addAlert } from '../notifications/notifications';
 import { AlertTypeEnum } from '../../models/alert.model';
 import { RootState } from '../index';
-import { sendCpSubscribedState, sendDaSubscribedState } from '../Subscription/Subscription';
 
 interface PubSubSocketState {
   webSocket?: WebSocket;
@@ -30,45 +28,25 @@ const puSubSocketSlice = createSlice({
 
 export const { setWebSocket } = puSubSocketSlice.actions;
 
-export const connectToServer = () => (
-  dispatch: ThunkDispatch<RootState, {}, Action>,
-  getState: () => RootState,
-): void => {
+export const connectToServer = (dispatch: ThunkDispatch<RootState, {}, Action>): void => {
   let interval: NodeJS.Timeout;
-  const {
-    twitch: { actual: twitchSub },
-    da: { actual: daSub },
-  } = getState().subscription;
 
   const onOpen = (ws: WebSocket): void => {
-    ws.send(JSON.stringify({ type: MESSAGE_TYPES.IDENTIFY_CLIENT }));
-
     interval = setInterval(() => {
-      if (ws) {
-        ws.send(JSON.stringify({ type: MESSAGE_TYPES.IDENTIFY_CLIENT }));
-      }
-
       axios.get('api/isAlive');
     }, 1000 * 60 * 30);
 
     dispatch(setWebSocket(ws));
-
-    if (twitchSub) {
-      dispatch(sendCpSubscribedState(twitchSub));
-    }
-
-    if (daSub) {
-      dispatch(sendDaSubscribedState(daSub));
-    }
   };
 
   const onClose = (): void => {
     dispatch(setWebSocket(undefined));
     dispatch(
       addAlert({
-        message: 'Произошло отключение от сервера, подождите пару секунд, сейчас все переподключится',
+        message:
+          'Произошло отключение от сервера, скипы через расширение не будут работать, попробуйте обновить страницу',
         type: AlertTypeEnum.Error,
-        duration: 7000,
+        duration: 8000,
       }),
     );
     clearInterval(interval);

@@ -11,3 +11,13 @@ export interface VideoRequest extends VideoData {
   username: string;
   id: string;
 }
+
+export enum VoteCommand {
+  Skip = 'SKIP',
+  Safe = 'SAFE',
+}
+
+export interface Vote {
+  userId: string;
+  command: VoteCommand;
+}
