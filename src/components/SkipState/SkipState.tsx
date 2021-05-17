@@ -124,7 +124,7 @@ const SkipState: FC<SkipStateProps> = ({ toNextVideo, currentVideo, videos }) =>
       <div className="skip-slice-container">
         <LinearProgress className="skip-progress" variant="determinate" value={progress} color={currentColor} />
         <div className="skips-count">
-          <span>{`${skipsDisplay} / `}</span>
+          <span>{`${skips} / `}</span>
           <Input className="max-skips-input" onBlur={handleMaxSkipsChange} defaultValue={maxSkips} />
         </div>
       </div>
