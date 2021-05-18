@@ -9,6 +9,11 @@
   background-color: $grey-12;
   border-right: 3px solid $grey-9;
 
+  .extension-form {
+    position: absolute;
+    left: 0;
+  }
+
   .player-actions {
     position: absolute;
     right: 30px;

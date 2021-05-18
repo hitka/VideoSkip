@@ -1,6 +1,6 @@
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import './SkipState.scss';
-import { Button, Input, LinearProgress } from '@material-ui/core';
+import { Button, FormControlLabel, Input, LinearProgress, Switch } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import { SkipBotService } from '../../services/SkipBotService';
 import { VideoRequest } from '../../models/video';
@@ -24,6 +24,8 @@ const SkipState: FC<SkipStateProps> = ({ toNextVideo, currentVideo, videos }) =>
   const [maxSkips, setMaxSkips] = useState<number>(7);
   const [skipService, setSkipService] = useState<SkipBotService>();
   const [skipEmotes, setSkipEmotes] = useState<SkipEmotes>({});
+  const [isExtension, setIsExtension] = useState<boolean>(false);
+  // const dispatch = useDispatch();
   const skipsDisplay = useMemo(() => {
     if (skips < 0) {
       return 0;
@@ -32,15 +34,29 @@ const SkipState: FC<SkipStateProps> = ({ toNextVideo, currentVideo, videos }) =>
     return skips;
   }, [skips]);
 
+  // const showAlert = useCallback(
+  //   async ({ userId, command }: Vote) => {
+  //     dispatch(
+  //       addAlert({
+  //         type: AlertTypeEnum.Success,
+  //         duration: 3000,
+  //         message: `${command === VoteCommand.Skip ? 'скипает' : 'сейвит'}`,
+  //       }),
+  //     );
+  //     await getTwitchUserInfo();
+  //   },
+  //   [dispatch],
+  // );
+
   const handleServerSkip = useCallback(
     ({ data }: MessageEvent) => {
       const { type, data: vote } = JSON.parse(data);
 
-      if (type === SERVER_MESSAGES.VIDEO_REQUEST_COMMAND) {
+      if (type === SERVER_MESSAGES.VIDEO_REQUEST_COMMAND && isExtension) {
         skipService?.handleVote(vote);
       }
     },
-    [skipService],
+    [isExtension, skipService],
   );
 
   // eslint-disable-next-line consistent-return
@@ -140,8 +156,24 @@ const SkipState: FC<SkipStateProps> = ({ toNextVideo, currentVideo, videos }) =>
     [username],
   );
 
+  const handleExtensionChange = useCallback(
+    (e, checked: boolean) => {
+      setIsExtension(checked);
+      if (skipService) {
+        skipService.allowSkip = !checked;
+      }
+    },
+    [skipService],
+  );
+
   return (
     <div className="skip-container">
+      <FormControlLabel
+        control={<Switch checked={isExtension} onChange={handleExtensionChange} color="primary" />}
+        label="Заказ через расширение"
+        className="extension-form"
+        labelPlacement="start"
+      />
       <EmoteSelect title="сейв" setEmote={handleSafeEmoteChange} defaultEmote={skipEmotes.safe} />
       <div className="skip-slice-container">
         <LinearProgress className="skip-progress" variant="determinate" value={progress} color={currentColor} />
