@@ -174,15 +174,15 @@ const SkipState: FC<SkipStateProps> = ({ toNextVideo, currentVideo, videos }) =>
         className="extension-form"
         labelPlacement="start"
       />
-      <EmoteSelect title="сейв" setEmote={handleSafeEmoteChange} defaultEmote={skipEmotes.safe} />
-      <div className="skip-slice-container">
+      {!isExtension && <EmoteSelect title="сейв" setEmote={handleSafeEmoteChange} defaultEmote={skipEmotes.safe} />}
+      <div className="skip-slice-container" style={{ marginRight: isExtension ? 20 : 0 }}>
         <LinearProgress className="skip-progress" variant="determinate" value={progress} color={currentColor} />
         <div className="skips-count">
           <span>{`${skips} / `}</span>
           <Input className="max-skips-input" onBlur={handleMaxSkipsChange} defaultValue={maxSkips} />
         </div>
       </div>
-      <EmoteSelect title="скип" setEmote={handleSkipEmoteChange} defaultEmote={skipEmotes.skip} />
+      {!isExtension && <EmoteSelect title="скип" setEmote={handleSkipEmoteChange} defaultEmote={skipEmotes.skip} />}
       <Button variant="contained" color={currentColor} onClick={skipVideo} className="skip-button">
         Скип
       </Button>
