@@ -17,7 +17,6 @@ export class SkipBotService {
   videos: VideoRequest[] = [];
   channel: string;
 
-  allowSkip = true;
   skipCommand = 'скип';
   safeCommand = 'сейв';
 
@@ -79,12 +78,12 @@ export class SkipBotService {
     '!myvid': this.logUserPosition,
   };
 
-  handleVote = (vote: Vote, onUpdate?: (vote: Vote) => Promise<void>): void => {
-    const { userId, command } = vote;
+  handleVote = (vote: Vote, onUpdate?: (vote: Vote) => void): void => {
+    const { username, command } = vote;
     const mapValue = command === VoteCommand.Skip ? 1 : -1;
 
-    if (this.skipMap.get(userId) !== mapValue) {
-      this.skipMap.set(userId, mapValue);
+    if (this.skipMap.get(username) !== mapValue) {
+      this.skipMap.set(username, mapValue);
       this.updateSkipCount();
       onUpdate && onUpdate(vote);
     }
@@ -100,15 +99,12 @@ export class SkipBotService {
     if (tags['display-name'] === this.ignoreUser) {
       return;
     }
+    if (message.startsWith(this.skipCommand)) {
+      this.handleVote({ username: tags['display-name'] || '', command: VoteCommand.Skip });
+    }
 
-    if (this.allowSkip) {
-      if (message.startsWith(this.skipCommand)) {
-        this.handleVote({ userId: tags['user-id'] || '', command: VoteCommand.Skip });
-      }
-
-      if (message.startsWith(this.safeCommand)) {
-        this.handleVote({ userId: tags['user-id'] || '', command: VoteCommand.Safe });
-      }
+    if (message.startsWith(this.safeCommand)) {
+      this.handleVote({ username: tags['display-name'] || '', command: VoteCommand.Safe });
     }
   };
 }

@@ -18,6 +18,6 @@ export enum VoteCommand {
 }
 
 export interface Vote {
-  userId: string;
+  username: string;
   command: VoteCommand;
 }

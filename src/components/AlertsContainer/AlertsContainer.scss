@@ -2,12 +2,20 @@
   position: absolute;
   z-index: 1000;
   bottom: 0;
-  margin-left: 10px;
+  margin-left: 155px;
 
   .MuiAlert-root {
     margin-top: 10px;
     padding: 0 16px;
-    font-size: 1rem;
+
+    .MuiAlert-icon {
+      font-size: 1.3rem;
+      padding: 6px 0;
+    }
+
+    .MuiAlert-message {
+      padding: 7px 0;
+    }
   }
 }
 

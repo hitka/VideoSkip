@@ -15,8 +15,8 @@ export const splitByUrls = (text: string): string[] => {
 
 export const getWebsocketUrl = (): string =>
   isProduction()
-    ? `wss://woods-service.herokuapp.com?jwtToken=${getCookie('jwtToken')}`
-    : `ws://localhost:8000?jwtToken=${getCookie('jwtToken')}`;
+    ? `wss://woods-service.herokuapp.com?jwtToken=${getCookie('jwtToken')}&isVideoRequest=true`
+    : `ws://localhost:8000?jwtToken=${getCookie('jwtToken')}&isVideoRequest=true`;
 
 export const parseYoutubeUrl = (url: string): string | null => {
   const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;

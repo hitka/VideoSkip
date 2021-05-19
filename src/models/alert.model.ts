@@ -1,3 +1,5 @@
+import { Color } from '@material-ui/lab/Alert/Alert';
+
 export enum AlertTypeEnum {
   Success = 'success',
   Error = 'error',
@@ -5,7 +7,7 @@ export enum AlertTypeEnum {
 
 export interface AlertProps {
   message: string;
-  type: AlertTypeEnum;
+  type: Color;
   duration?: number;
 }
 

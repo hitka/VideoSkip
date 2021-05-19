@@ -1,15 +1,16 @@
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import './SkipState.scss';
-import { Button, FormControlLabel, Input, LinearProgress, Switch } from '@material-ui/core';
-import { useSelector } from 'react-redux';
+import { Button, Input, LinearProgress } from '@material-ui/core';
+import { useDispatch, useSelector } from 'react-redux';
 import { SkipBotService } from '../../services/SkipBotService';
-import { VideoRequest } from '../../models/video';
+import { VideoRequest, Vote, VoteCommand } from '../../models/video';
 import EmoteSelect from '../EmoteSelect/EmoteSelect';
 import { EmoteData, SkipEmotes } from '../../models/common.model';
 import { getSkipEmotes, updateSkipEmotes } from '../../api/userApi';
 import { RootState } from '../../reducers';
 import PlayerActions from '../PlayerActions/PlayerActions';
 import { SERVER_MESSAGES } from '../../constants/webSocket.constants';
+import { addAlert } from '../../reducers/notifications/notifications';
 
 interface SkipStateProps {
   toNextVideo: () => void;
@@ -24,8 +25,7 @@ const SkipState: FC<SkipStateProps> = ({ toNextVideo, currentVideo, videos }) =>
   const [maxSkips, setMaxSkips] = useState<number>(7);
   const [skipService, setSkipService] = useState<SkipBotService>();
   const [skipEmotes, setSkipEmotes] = useState<SkipEmotes>({});
-  const [isExtension, setIsExtension] = useState<boolean>(false);
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const skipsDisplay = useMemo(() => {
     if (skips < 0) {
       return 0;
@@ -34,29 +34,28 @@ const SkipState: FC<SkipStateProps> = ({ toNextVideo, currentVideo, videos }) =>
     return skips;
   }, [skips]);
 
-  // const showAlert = useCallback(
-  //   async ({ userId, command }: Vote) => {
-  //     dispatch(
-  //       addAlert({
-  //         type: AlertTypeEnum.Success,
-  //         duration: 3000,
-  //         message: `${command === VoteCommand.Skip ? 'скипает' : 'сейвит'}`,
-  //       }),
-  //     );
-  //     await getTwitchUserInfo();
-  //   },
-  //   [dispatch],
-  // );
+  const showAlert = useCallback(
+    ({ username: user, command }: Vote) => {
+      dispatch(
+        addAlert({
+          type: 'info',
+          duration: 3000,
+          message: `${user} ${command === VoteCommand.Skip ? 'скипает' : 'сейвит'}`,
+        }),
+      );
+    },
+    [dispatch],
+  );
 
   const handleServerSkip = useCallback(
     ({ data }: MessageEvent) => {
       const { type, data: vote } = JSON.parse(data);
 
-      if (type === SERVER_MESSAGES.VIDEO_REQUEST_COMMAND && isExtension) {
-        skipService?.handleVote(vote);
+      if (type === SERVER_MESSAGES.VIDEO_REQUEST_COMMAND) {
+        skipService?.handleVote(vote, showAlert);
       }
     },
-    [isExtension, skipService],
+    [showAlert, skipService],
   );
 
   // eslint-disable-next-line consistent-return
@@ -156,33 +155,17 @@ const SkipState: FC<SkipStateProps> = ({ toNextVideo, currentVideo, videos }) =>
     [username],
   );
 
-  const handleExtensionChange = useCallback(
-    (e, checked: boolean) => {
-      setIsExtension(checked);
-      if (skipService) {
-        skipService.allowSkip = !checked;
-      }
-    },
-    [skipService],
-  );
-
   return (
     <div className="skip-container">
-      <FormControlLabel
-        control={<Switch checked={isExtension} onChange={handleExtensionChange} color="primary" />}
-        label="Заказ через расширение"
-        className="extension-form"
-        labelPlacement="start"
-      />
-      {!isExtension && <EmoteSelect title="сейв" setEmote={handleSafeEmoteChange} defaultEmote={skipEmotes.safe} />}
-      <div className="skip-slice-container" style={{ marginRight: isExtension ? 20 : 0 }}>
+      <EmoteSelect title="сейв" setEmote={handleSafeEmoteChange} defaultEmote={skipEmotes.safe} />
+      <div className="skip-slice-container">
         <LinearProgress className="skip-progress" variant="determinate" value={progress} color={currentColor} />
         <div className="skips-count">
           <span>{`${skips} / `}</span>
           <Input className="max-skips-input" onBlur={handleMaxSkipsChange} defaultValue={maxSkips} />
         </div>
       </div>
-      {!isExtension && <EmoteSelect title="скип" setEmote={handleSkipEmoteChange} defaultEmote={skipEmotes.skip} />}
+      <EmoteSelect title="скип" setEmote={handleSkipEmoteChange} defaultEmote={skipEmotes.skip} />
       <Button variant="contained" color={currentColor} onClick={skipVideo} className="skip-button">
         Скип
       </Button>
