@@ -1,6 +1,6 @@
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import './SkipState.scss';
-import { Button, Input, LinearProgress } from '@material-ui/core';
+import {Button, Checkbox, FormControlLabel, Input, LinearProgress} from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { SkipBotService } from '../../services/SkipBotService';
 import { VideoRequest, Vote, VoteCommand } from '../../models/video';
@@ -25,6 +25,7 @@ const SkipState: FC<SkipStateProps> = ({ toNextVideo, currentVideo, videos }) =>
   const [maxSkips, setMaxSkips] = useState<number>(7);
   const [skipService, setSkipService] = useState<SkipBotService>();
   const [skipEmotes, setSkipEmotes] = useState<SkipEmotes>({});
+  const [isAutoSkip, setIsAutoSkip] = useState<boolean>(false);
   const dispatch = useDispatch();
   const skipsDisplay = useMemo(() => {
     if (skips < 0) {
@@ -110,6 +111,12 @@ const SkipState: FC<SkipStateProps> = ({ toNextVideo, currentVideo, videos }) =>
     toNextVideo();
   }, [skipService, toNextVideo]);
 
+  useEffect(() => {
+    if (skips === maxSkips && isAutoSkip) {
+      skipVideo();
+    }
+  });
+
   const handleMaxSkipsChange = useCallback((e: any) => {
     setMaxSkips(Number(e.target.value));
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -155,8 +162,18 @@ const SkipState: FC<SkipStateProps> = ({ toNextVideo, currentVideo, videos }) =>
     [username],
   );
 
+  const handleAutoSkipChange = useCallback((e, checked: boolean) => {
+    setIsAutoSkip(checked);
+  }, []);
+
   return (
     <div className="skip-container">
+      <div className="auto-skip">
+      <FormControlLabel
+          control={<Checkbox checked={isAutoSkip} onChange={handleAutoSkipChange} />}
+          label="автоскип"
+      />
+      </div>
       <EmoteSelect title="сейв" setEmote={handleSafeEmoteChange} defaultEmote={skipEmotes.safe} />
       <div className="skip-slice-container">
         <LinearProgress className="skip-progress" variant="determinate" value={progress} color={currentColor} />
