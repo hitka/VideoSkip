@@ -41,7 +41,7 @@ export const store = configureStore({
   middleware: [thunk, sortSlotsMiddleware],
 });
 
-if (window.location.host === 'woodsauc-reneawal.netlify.app') {
+if (window.location.host === 'hitka.github.io/VideoSkip/') {
   ReactDOM.render(
     <MuiThemeProvider theme={theme}>
       <NewDomainRedirect />
